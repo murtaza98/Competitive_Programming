@@ -19,12 +19,9 @@ public class sum_range {
 					arr[i] = ip.nextInt();
 				}
 
-				SegmentTree segmentTree = new SegmentTree(arr, n);
+                SegmentTree segmentTree = new SegmentTree(arr, n);
+                
 
-
-
-
-				
 			    
 				sb.append("\n");
 			}
@@ -38,12 +35,13 @@ public class sum_range {
 }
 
 class SegmentTree{
-	int[] st;
+    int[] st;
+    int n;
 	SegmentTree(int[] arr, int n){
-        int pos = (int)Math.ceil(Math.log(n)/Math.log(2));
-        int st_size = 2*(int)Math.pow(2, pos) - 1;
-        System.out.println("SIZE OF ST "+st_size + " "+pos);
-		st = new int[st_size];
+        int bit_set_pos = (int)Math.ceil(Math.log(n)/Math.log(2));
+        int st_size = 2*(int)Math.pow(2, bit_set_pos) - 1;
+        st = new int[st_size];
+        this.n = n;
 
 		build_segment_tree(arr, 0, n-1, 0);
 
@@ -63,11 +61,46 @@ class SegmentTree{
     }
     
     int query(int l, int r){
-        return 1;
+        return queryUtil(0, 0, n-1, l, r);
     }
 
-    void update(int i, int val){
+    int queryUtil(int st_idx, int start, int end, int l, int r){
+        if(start>r || end<l){
+            // range represented by a node is completely outside the given range
+            return 0;
+        }else if(l<=start && r>=end){
+            // range represented by a node is completely inside the given range
+            return st[st_idx];
+        }
+        
+        // this node contains partial range
+        int mid = (start+end)/2;
+        int p1 = queryUtil(2*st_idx+1, start, mid, l, r);
+        int p2 = queryUtil(2*st_idx+2, mid+1, end, l, r);
 
+        return p1+p2;
+    }
+
+    void update(int idx, int val){
+        updateUtil(0, 0, n-1, idx, val);
+    }
+
+    void updateUtil(int st_idx, int start, int end, int idx, int val){
+        if(start==end){
+            // leaf node
+            st[st_idx] += val;
+            return;
+        }
+        int mid = (start+end)/2;
+        if(start<=idx && idx<=mid){
+            // idx is in left child
+            updateUtil(2*st_idx+1, start, mid, idx, val);
+        }else{
+            // idx is in right child
+            updateUtil(2*st_idx+2, mid+1, end, idx, val);
+        }
+
+        st[st_idx] = st[2*st_idx+1] + st[2*st_idx+2];
     }
 }
 
