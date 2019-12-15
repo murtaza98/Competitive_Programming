@@ -44,8 +44,8 @@ class SegmentTreeWithLazyProp{
             st[st_idx] += (end-start+1) * lazy[st_idx];
             if(start != end){
                 // it is a non-leaf node, so propogate update to childs
-                st[2*st_idx+1] += lazy[st_idx];
-                st[2*st_idx+2] += lazy[st_idx];
+                lazy[2*st_idx+1] += lazy[st_idx];
+                lazy[2*st_idx+2] += lazy[st_idx];
             }
             lazy[st_idx] = 0;
         }
@@ -98,6 +98,6 @@ class SegmentTreeWithLazyProp{
         int mid = (start+end)/2;
         updateUtil(2*st_idx+1, start, mid, l, r, val);
         updateUtil(2*st_idx+2, mid+1, end, l, r, val);
-        st[st_idx] += st[2*st_idx+1] + st[2*st_idx+2];
+        st[st_idx] = st[2*st_idx+1] + st[2*st_idx+2];
     }
 }
