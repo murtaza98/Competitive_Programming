@@ -147,7 +147,7 @@ class GFG {
 
 
 		// MODULAR ADDITION AND MULTIPLICATION
-		static long mod_multiply(int a, int b){
+		static long mod_multiply(long a, long b){
 	        int mod = 1000000007;
 	        return (long)((a%mod)*(b%mod))%mod;
 	    }
