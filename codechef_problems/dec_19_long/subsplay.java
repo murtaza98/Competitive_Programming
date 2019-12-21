@@ -2,66 +2,100 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
+// LOGIC
+// Find a pair of repeating chars such that they are least distance apart,
+// then delete chars in between these 2 pairs
+// the remaining length will be the max length of subsequence
+
 class subsplay {
-	static HashMap<String, Integer> subs;
-	static String s;
 	public static void main (String[] args) throws Exception {
 		try{
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-			int t = Integer.parseInt(br.readLine().trim());
-			
+			FastReader ip = new FastReader();
+			int t = ip.nextInt();
 			StringBuffer sb = new StringBuffer();
 
 			while(t-->0){
+				int n = ip.nextInt();
+                String s = ip.next();
+                
+                int[] last_indx = new int[26];
+                Arrays.fill(last_indx, -1);
 
-				int n=Integer.parseInt(br.readLine().trim());
-			    
-				s = br.readLine().trim();
+                
+                int least_dist = n;
+                for(int i=0;i<n;i++){
+                    int ci = s.charAt(i)-'a';
+                    if(last_indx[ci] != -1){
+                        least_dist = Math.min(least_dist, i-last_indx[ci]);
+                    }
+                    last_indx[ci] = i;
+                }
 
-				subs = new HashMap<>();
-
-				generate_subsequences(0, new StringBuilder());
-
-				int max_k = 0;
-				int max_occ = 1;
-
-
-				Iterator <Map.Entry<String, Integer>> iter = subs.entrySet().iterator();
-				while(iter.hasNext()){
-					Map.Entry<String, Integer> entry = iter.next();
-					if(entry.getValue() > 1 && entry.getKey().length() > max_k){
-						max_k = entry.getKey().length();
-					}
-				}
-
-				sb.append(max_k);
-
-
+                sb.append(String.valueOf(n-least_dist));
 				sb.append("\n");
-			
-			}			
+			}
+
 			System.out.print(sb);
 		}catch(Exception e){
-			// System.out.print("Exception "+e);
+			System.out.println("Exception "+e);
 			return;
 		}
 	}
-
-	static void generate_subsequences(int i, StringBuilder curr_subs){
-		if(i==s.length()){
-			String key = curr_subs.toString();
-			if(subs.containsKey(key)){
-				subs.put(key, subs.get(key)+1);
-			}else{
-				subs.put(key, 1);
-			}
-			return;
-		}
-		StringBuilder with_i = new StringBuilder(curr_subs.toString());
-		with_i.append(s.charAt(i));
-		generate_subsequences(i+1, with_i);
-		generate_subsequences(i+1, curr_subs);
-	}
-
 }
+
+class FastReader 
+{ 
+    BufferedReader br; 
+    StringTokenizer st; 
+
+    public FastReader() 
+    { 
+        br = new BufferedReader(new
+                 InputStreamReader(System.in)); 
+    } 
+
+    String next() 
+    { 
+        while (st == null || !st.hasMoreElements()) 
+        { 
+            try
+            { 
+                st = new StringTokenizer(br.readLine()); 
+            } 
+            catch (IOException  e) 
+            { 
+                e.printStackTrace(); 
+            } 
+        } 
+        return st.nextToken(); 
+    } 
+
+    int nextInt() 
+    { 
+        return Integer.parseInt(next()); 
+    } 
+
+    long nextLong() 
+    { 
+        return Long.parseLong(next()); 
+    } 
+
+    double nextDouble() 
+    { 
+        return Double.parseDouble(next()); 
+    } 
+
+    String nextLine() 
+    { 
+        String str = ""; 
+        try
+        { 
+            str = br.readLine(); 
+        } 
+        catch (IOException e) 
+        { 
+            e.printStackTrace(); 
+        } 
+        return str; 
+    } 
+} 	
