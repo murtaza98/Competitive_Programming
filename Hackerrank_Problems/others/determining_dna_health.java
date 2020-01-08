@@ -60,32 +60,6 @@ public class determining_dna_health {
             
             startTime = System.nanoTime();
 
-
-            // to handle duplicate genes
-            // HashMap<String, Integer> match_genes = new HashMap<>();
-            // for(int idx :  match_idx){
-            //     if(idx>=start && idx<=end){
-            //         String gene = genes[idx];
-            //         if(match_genes.containsKey(gene)){
-            //             match_genes.put(gene, match_genes.get(gene) + 1);
-            //         }else{
-            //             match_genes.put(gene, 1);
-            //         }
-            //     }
-            // }
-
-            // long curr_health = 0;
-
-            // // System.out.println(Arrays.toString(match_idx.toArray()));
-
-            // for(int idx=start; idx<=end; idx++){
-            //     String gene = genes[idx];
-            //     if(match_genes.containsKey(gene)){
-            //         int gene_occ = match_genes.get(gene);
-            //         curr_health += health[idx] * gene_occ;
-            //     }
-            // }
-
             min_health = Math.min(curr_health, min_health);
             max_health = Math.max(curr_health, max_health);
 
@@ -159,6 +133,16 @@ class FastReader {
 
 
 class Aho {
+    
+    static class IndexHealth {
+        int index;
+        long health;
+        IndexHealth(int index, long health){
+            this.index = index;
+            this.health = health;
+        }
+    }
+
     static class Vertex 
     {
         // Links to the child vertexes in the trie:
@@ -182,7 +166,7 @@ class Aho {
         public int EndWordLink;
     
         // If the vertex is the leaf, we store the ID of the word
-        public ArrayList<Integer> WordID;
+        public ArrayList<IndexHealth> WordID;
 
         // store health
         public long health;
@@ -240,8 +224,7 @@ class Aho {
         }
         // Mark the end of the word and store its ID
         Trie.get(curVertex).Leaf = true;
-        Trie.get(curVertex).WordID.add(wordID);
-        Collections.sort(Trie.get(curVertex).WordID);
+        Trie.get(curVertex).WordID.add(new IndexHealth(wordID, geneHealth));
         Trie.get(curVertex).health += geneHealth;
         WordsLength.add(s.length());
     }
@@ -361,10 +344,12 @@ class Aho {
                 // the index of the found match in the text. Or check that the found
                 // pattern is a separate word and not just, e.g., a substring.
                 result++;
-                ArrayList<Integer> wordIds = Trie.get(checkState).WordID;
-                if(withinRangeSorted(wordIds, start, end+1)){
-                    total_health += Trie.get(checkState).health;
-                } 
+                ArrayList<IndexHealth> wordIds = Trie.get(checkState).WordID;
+                for(IndexHealth i : wordIds){
+                    if(i.index>=start && i.index<=end){
+                        total_health += i.health;
+                    }
+                }
                 // indexes.add(Trie.get(checkState).WordID);
                 
                 // int indexOfMatch = j + 1 - WordsLength.get(Trie.get(checkState).WordID);
@@ -377,21 +362,6 @@ class Aho {
         return total_health;
     }
 
-    boolean withinRangeSorted (ArrayList<Integer> arr, int l, int u) {
-        int start = 0;
-        int end = arr.size();
-        while (start < end) {
-            int current = (start + end) / 2;
-            if (arr.get(current) >= u) {
-                end = current;
-            } else if (arr.get(current) < l) {
-                start = current + 1;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
 }
 
 
