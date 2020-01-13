@@ -166,8 +166,10 @@ class GFG {
 
 	    class Graph{
     LinkedList<Integer> adjList[];
-
+    int N;
+    
     Graph(int n){
+        this.N = n;
         adjList = new LinkedList[n+1];
         for(int i=1;i<=n;i++){
             adjList[i] = new LinkedList<Integer>();
